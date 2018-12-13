@@ -23,7 +23,6 @@ GameKeyBoard.propTypes = {
   onClick: PropTypes.func.isRequired,
 }
 
-
 class App extends Component {
   state = {
     wordToFind: "QUEEN",
@@ -48,6 +47,8 @@ class App extends Component {
     // Add to current array
     const newCurrentUsedLetters = currentUsedLetters.add(letter)
     this.setState({ currentUsedLetters: newCurrentUsedLetters })
+
+    //
   }
 
   render() {
@@ -55,18 +56,23 @@ class App extends Component {
 
     return (
       <div className="App">
+        <h1>React Pendu</h1>
+
         <GameZone word={this.computeDisplay(wordToFind, currentUsedLetters)} />
 
         <GameTry nbTry={nbTry} />
 
-        {ALPHABET_SPLIT.map((letter, index) => (
-            <GameKeyBoard
-                letter={letter}
-                index={index}
-                key={index}
-                onClick={this.handleKeyClick}
-            />
-        ))}
+        <div className="gameKeyBoards">
+          {ALPHABET_SPLIT.map((letter, index) => (
+              <GameKeyBoard
+                  letter={letter}
+                  index={index}
+                  key={index}
+                  onClick={this.handleKeyClick}
+              />
+          ))}
+        </div>
+
       </div>
     );
   }

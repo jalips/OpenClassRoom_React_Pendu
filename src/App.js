@@ -1,35 +1,49 @@
 import React, { Component } from 'react';
 import './App.css';
 
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const ALPHABET_SPLIT = ALPHABET.split('')
+
+const GameZone = ({ word }) => <div className="gameZone">{word}</div>
+
+const GameKeyBoard = ({ letter, index, onClick }) =>
+    <button onClick={() => onClick(index, letter)} className="gameKeyBoard">{letter}</button>
+
 class App extends Component {
+  state = {
+    wordToFind: "QUEEN",
+    matchedLetter: new Set ([]),
+  }
+
+  computeDisplay(phrase, usedLetters) {
+    return phrase.replace(/\w/g,
+        (letter) => (usedLetters.has(letter) ? letter : '_')
+    )
+  }
+
+  // Arrow fx for binding
+  handleKeyClick = (index, letter) => {
+
+    console.log("click on "+index+ "  "+letter)
+
+    return
+  }
 
   render() {
-
-    // Produit une représentation textuelle de l’état de la partie,
-    // chaque lettre non découverte étant représentée par un _underscore_.
-    // (CSS assurera de l’espacement entre les lettres pour mieux
-    // visualiser le tout).
-    function computeDisplay(phrase, usedLetters) {
-      return phrase.replace(/\w/g,
-          (letter) => (usedLetters.has(letter) ? letter : '_')
-      )
-    }
+    const { wordToFind, matchedLetter } = this.state
 
     return (
       <div className="App">
-        <header className="App-header">
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <GameZone word={this.computeDisplay(wordToFind, matchedLetter)} />
+
+        {ALPHABET_SPLIT.map((letter, index) => (
+            <GameKeyBoard
+                letter={letter}
+                index={index}
+                key={index}
+                onClick={this.handleKeyClick}
+            />
+        ))}
       </div>
     );
   }

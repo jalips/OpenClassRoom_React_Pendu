@@ -1,13 +1,23 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
+
   render() {
+
+    // Produit une représentation textuelle de l’état de la partie,
+    // chaque lettre non découverte étant représentée par un _underscore_.
+    // (CSS assurera de l’espacement entre les lettres pour mieux
+    // visualiser le tout).
+    function computeDisplay(phrase, usedLetters) {
+      return phrase.replace(/\w/g,
+          (letter) => (usedLetters.has(letter) ? letter : '_')
+      )
+    }
+
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
           <p>
             Edit <code>src/App.js</code> and save to reload.
           </p>

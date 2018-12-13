@@ -10,21 +10,26 @@ GameZone.propTypes = {
   word: PropTypes.string.isRequired,
 }
 
-const GameTry = ({ nbTry }) => <div className="gameTry">You try : {nbTry} time</div>
+const GameTry = ({ nbTry }) => <div className="gameTry">You try : {nbTry} time(s)</div>
 GameTry.propTypes = {
   nbTry: PropTypes.number.isRequired,
 }
 
-const GameKeyBoard = ({ letter, index, onClick }) =>
-    <button onClick={() => onClick(index, letter)} className="gameKeyBoard">{letter}</button>
+const GameKeyBoard = ({ letter, index, status, onClick }) =>
+    <button onClick={() => onClick(index, letter)} className={`gameKeyBoard ${status}`}>{letter}</button>
 GameKeyBoard.propTypes = {
   letter: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
+  status: PropTypes.oneOf([
+    '',
+    'gameKeyBoardUsed',
+  ]).isRequired,
   onClick: PropTypes.func.isRequired,
 }
 
 class App extends Component {
   state = {
+    won: false,
     wordToFind: "QUEEN",
     currentUsedLetters: new Set ([]),
     nbTry: 0,
@@ -38,7 +43,7 @@ class App extends Component {
 
   // Arrow fx for binding
   handleKeyClick = (index, letter) => {
-    const { nbTry, currentUsedLetters } = this.state
+    const { nbTry, currentUsedLetters, wordToFind } = this.state
 
     // Increment one try
     const newNbTry = nbTry + 1
@@ -48,11 +53,27 @@ class App extends Component {
     const newCurrentUsedLetters = currentUsedLetters.add(letter)
     this.setState({ currentUsedLetters: newCurrentUsedLetters })
 
-    //
+    // Add is won
+    this.computeDisplay(wordToFind, newCurrentUsedLetters).search("_") < 0 && this.setState({ won: true })
+  }
+
+  // Arrow fx for binding
+  handleResetClick = () => {
+    this.setState({
+      won: false,
+      wordToFind: "QUEEN",
+      currentUsedLetters: new Set ([]),
+      nbTry: 0,
+    });
+  }
+
+  getStatusForKeyboard(letter) {
+    const { currentUsedLetters } = this.state
+    return currentUsedLetters.has(letter) ? 'gameKeyBoardUsed' : ''
   }
 
   render() {
-    const { wordToFind, currentUsedLetters, nbTry } = this.state
+    const { wordToFind, currentUsedLetters, nbTry, won } = this.state
 
     return (
       <div className="App">
@@ -60,18 +81,24 @@ class App extends Component {
 
         <GameZone word={this.computeDisplay(wordToFind, currentUsedLetters)} />
 
-        <GameTry nbTry={nbTry} />
+        {
+          won ? <div><h3>Vous avez gagné</h3><button onClick={this.handleResetClick}>Reset</button></div> :
+              <div className="gameKeyBoards">
+                {ALPHABET_SPLIT.map((letter, index) => (
+                    <GameKeyBoard
+                        letter={letter}
+                        status={this.getStatusForKeyboard(letter)}
+                        index={index}
+                        key={index}
+                        onClick={this.handleKeyClick}
+                    />
+                ))}
+              </div>
+        }
 
-        <div className="gameKeyBoards">
-          {ALPHABET_SPLIT.map((letter, index) => (
-              <GameKeyBoard
-                  letter={letter}
-                  index={index}
-                  key={index}
-                  onClick={this.handleKeyClick}
-              />
-          ))}
-        </div>
+        {
+          nbTry > 1 && <GameTry nbTry={nbTry} />
+        }
 
       </div>
     );

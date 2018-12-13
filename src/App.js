@@ -6,6 +6,9 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const ALPHABET_SPLIT = ALPHABET.split('')
 
 const GameZone = ({ word }) => <div className="gameZone">{word}</div>
+GameZone.propTypes = {
+  word: PropTypes.string.isRequired,
+}
 
 const GameTry = ({ nbTry }) => <div className="gameTry">You try : {nbTry} time</div>
 GameTry.propTypes = {
@@ -14,11 +17,17 @@ GameTry.propTypes = {
 
 const GameKeyBoard = ({ letter, index, onClick }) =>
     <button onClick={() => onClick(index, letter)} className="gameKeyBoard">{letter}</button>
+GameKeyBoard.propTypes = {
+  letter: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  onClick: PropTypes.func.isRequired,
+}
+
 
 class App extends Component {
   state = {
     wordToFind: "QUEEN",
-    currentUsedLetters: new Set (['E']),
+    currentUsedLetters: new Set ([]),
     nbTry: 0,
   }
 
@@ -32,17 +41,13 @@ class App extends Component {
   handleKeyClick = (index, letter) => {
     const { nbTry, currentUsedLetters } = this.state
 
-    console.log("click on "+index+ "  "+letter)
-
     // Increment one try
     const newNbTry = nbTry + 1
     this.setState({ nbTry: newNbTry })
 
     // Add to current array
-    currentUsedLetters.add(letter)
-    //this.setState({ currentUsedLetters: [currentUsedLetters] })
-
-    //this.setState({ currentUsedLetters: [...currentUsedLetters, ...currentUsedLetters] })
+    const newCurrentUsedLetters = currentUsedLetters.add(letter)
+    this.setState({ currentUsedLetters: newCurrentUsedLetters })
   }
 
   render() {
